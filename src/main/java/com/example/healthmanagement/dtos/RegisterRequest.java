@@ -28,8 +28,6 @@ public class RegisterRequest {
     @NotNull(message = "Date of birth is required")
     private LocalDate dob;
 
-    @NotNull(message = "Role is required")
-    private Role role;
 
     @NotBlank(message = "Password is required")
     @Size(min = 6, message = "Password must be at least 6 characters")

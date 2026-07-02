@@ -3,6 +3,7 @@ package com.example.healthmanagement.service;
 import com.example.healthmanagement.dtos.RegisterRequest;
 import com.example.healthmanagement.dtos.UserResponse;
 import com.example.healthmanagement.model.User;
+import com.example.healthmanagement.model.enums.Role;
 import com.example.healthmanagement.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -43,7 +44,7 @@ public class AdminService {
         user.setDob(request.getDob());
         user.setSex(request.getSex());
         user.setContactPhone(request.getContactPhone());
-        user.setRole(request.getRole());
+        user.setRole(Role.PATIENT);
         user.setInsuranceStatus("Active");
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         userRepository.save(user);
