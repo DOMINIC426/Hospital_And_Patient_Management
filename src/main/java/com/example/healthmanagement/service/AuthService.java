@@ -6,6 +6,7 @@ import com.example.healthmanagement.dtos.RegisterRequest;
 import com.example.healthmanagement.dtos.RegisterResponse;
 import com.example.healthmanagement.jwts.JwtService;
 import com.example.healthmanagement.model.User;
+import com.example.healthmanagement.model.enums.Role;
 import com.example.healthmanagement.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -32,6 +33,7 @@ public class AuthService {
         User user = modelMapper.map(request, User.class);
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         user.setInsuranceStatus("Active");
+        user.setRole(Role.PATIENT);
         User savedUser = userRepository.save(user);
 
         String token = jwtService.generateToken(savedUser);
