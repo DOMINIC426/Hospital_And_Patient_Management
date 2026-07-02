@@ -1,5 +1,6 @@
 package com.example.healthmanagement.controller;
 
+import com.example.healthmanagement.dtos.AddUserRequest;
 import com.example.healthmanagement.dtos.RegisterRequest;
 import com.example.healthmanagement.dtos.UserResponse;
 import com.example.healthmanagement.service.AdminService;
@@ -32,7 +33,7 @@ public class AdminController {
 
     @PreAuthorize("hasAuthority('ADMINISTRATOR')")
     @PostMapping("/add-user")
-    public ResponseEntity<String> addUser(@RequestBody @Valid RegisterRequest request) {
+    public ResponseEntity<String> addUser(@RequestBody @Valid AddUserRequest request) {
         return ResponseEntity.ok(adminService.addUser(request));
     }
 }

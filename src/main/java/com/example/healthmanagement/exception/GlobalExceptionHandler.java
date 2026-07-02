@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -25,6 +26,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public Map<String,String> handleException(Exception e){
         return Map.of("message",e.getMessage(),"time", LocalDateTime.now().toString());
+    }
+
+    @ExceptionHandler(DayIsNotValidException.class)
+    public  Map<String,String> handleDayIsNotValidException(DayIsNotValidException e){
+        return Map.of("message",e.getMessage(),"time", LocalDate.now().toString());
     }
 
 

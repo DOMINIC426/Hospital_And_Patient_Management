@@ -1,5 +1,7 @@
 package com.example.healthmanagement.controller;
 
+import com.example.healthmanagement.dtos.AppointmentRequest;
+import com.example.healthmanagement.dtos.AppointmentResponse;
 import com.example.healthmanagement.dtos.MedicalHistoryRequest;
 import com.example.healthmanagement.service.PatientService;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +24,14 @@ public class PatientController {
 
     @PreAuthorize("hasAuthority('PATIENT')")
     @GetMapping("/medical-history/{id}")
-    public ResponseEntity<MedicalHistoryRequest> getMedicalHistory(@RequestParam Long id){
+    public ResponseEntity<MedicalHistoryRequest> getMedicalHistory(@PathVariable Long id){
         return ResponseEntity.ok(patientService.getMedicalReport(id));
+    }
+
+    @PreAuthorize("hasAuthority('PATIENT')")
+    @PostMapping("/make-appointment/{phone}/{clinicianID}")
+    public ResponseEntity<AppointmentResponse> makeAppointment(@RequestBody AppointmentRequest request,@PathVariable String phone,@PathVariable Long clinicianID){
+        return ResponseEntity.ok(patientService.makeAppointment(phone,request,clinicianID));
     }
 
 }

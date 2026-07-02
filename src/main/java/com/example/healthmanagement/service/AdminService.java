@@ -1,11 +1,14 @@
 package com.example.healthmanagement.service;
 
+import com.example.healthmanagement.dtos.AddUserRequest;
 import com.example.healthmanagement.dtos.RegisterRequest;
 import com.example.healthmanagement.dtos.UserResponse;
 import com.example.healthmanagement.model.User;
 import com.example.healthmanagement.model.enums.Role;
 import com.example.healthmanagement.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +19,7 @@ import java.util.List;
 public class AdminService {
 
     private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
     private final BCryptPasswordEncoder passwordEncoder;
 
     public List<UserResponse> getAllUsers() {
@@ -25,6 +29,7 @@ public class AdminService {
                 .toList();
     }
 
+    @Transactional
     public String deleteUser(String contactPhone) {
         User user = userRepository.findByContactPhone(contactPhone);
         if (user == null) {
@@ -34,20 +39,19 @@ public class AdminService {
         return "User deleted successfully";
     }
 
-    public String addUser(RegisterRequest request) {
+    @Transactional
+    public String addUser(AddUserRequest request) {
         if (userRepository.findByContactPhone(request.getContactPhone()) != null) {
             throw new RuntimeException("Phone number already in use");
         }
-        User user = new User();
-        user.setFirstName(request.getFirstName());
-        user.setLastName(request.getLastName());
-        user.setDob(request.getDob());
-        user.setSex(request.getSex());
-        user.setContactPhone(request.getContactPhone());
-        user.setRole(Role.PATIENT);
-        user.setInsuranceStatus("Active");
-        user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
+        User user = modelMapper.map(request,User.class);
+        user.setInsuranceStatus("ACTIVE");
+        String password=user.getLastName().toUpperCase();
+        user.setPasswordHash(passwordEncoder.encode(password));
+
+        //save user
         userRepository.save(user);
+
         return "User added successfully";
     }
 

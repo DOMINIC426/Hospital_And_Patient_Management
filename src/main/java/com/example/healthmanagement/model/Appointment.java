@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate; // Changed from LocalDateTime
 
 @Entity
 @Table(name = "appointments")
@@ -29,7 +29,9 @@ public class Appointment {
     @JoinColumn(name = "clinician_id", nullable = false)
     private User clinician;
 
-    private LocalDateTime dateTime;
+    // Changed to LocalDate to support "2030-04-01" style format
+    private LocalDate dateTime;
+
     private Integer queueNumber;
 
     @Enumerated(EnumType.STRING)
