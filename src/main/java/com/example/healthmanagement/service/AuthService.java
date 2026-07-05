@@ -4,6 +4,7 @@ import com.example.healthmanagement.dtos.AuthenticationResponse;
 import com.example.healthmanagement.dtos.LoginRequest;
 import com.example.healthmanagement.dtos.RegisterRequest;
 import com.example.healthmanagement.dtos.RegisterResponse;
+import com.example.healthmanagement.exception.UserAlreadyExistException;
 import com.example.healthmanagement.jwts.JwtService;
 import com.example.healthmanagement.model.User;
 import com.example.healthmanagement.model.enums.Role;
@@ -16,6 +17,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RequiredArgsConstructor
 @Service
 public class AuthService {
@@ -27,7 +31,7 @@ public class AuthService {
 
     public RegisterResponse register(RegisterRequest request) {
         if (userRepository.findByContactPhone(request.getContactPhone()) != null) {
-            throw new IllegalArgumentException("Phone number already in use");
+            throw new UserAlreadyExistException("Phone number already in use");
         }
 
         User user = modelMapper.map(request, User.class);
@@ -36,7 +40,11 @@ public class AuthService {
         user.setRole(Role.PATIENT);
         User savedUser = userRepository.save(user);
 
-        String token = jwtService.generateToken(savedUser);
+        //adding the user Role in token
+        Map<String,Object> claims = new HashMap<>();
+        claims.put("role",savedUser.getRole());
+
+        String token = jwtService.generateToken(claims,savedUser);
         return new RegisterResponse(token);
     }
 
@@ -51,7 +59,11 @@ public class AuthService {
             throw new UsernameNotFoundException("User not found");
         }
 
-        String token = jwtService.generateToken(user);
+        //include the role in token
+        Map<String,Object> claims= new HashMap<>();
+        claims.put("role",user.getRole().name());
+
+        String token = jwtService.generateToken(claims,user);
         return new AuthenticationResponse(token);
     }
 }
