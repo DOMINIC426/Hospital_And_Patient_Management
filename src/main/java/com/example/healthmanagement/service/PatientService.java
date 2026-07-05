@@ -74,7 +74,7 @@ public class PatientService {
 
         //save appointment and connect with user
         appointment.setPatient(findUser);
-        appointment.setStatus(AppointmentStatus.COMPLETED);
+        appointment.setStatus(AppointmentStatus.PENDING);
         appointment.setClinician(clinician);
         if(appointment.getDateTime().isBefore(LocalDate.now())){
             throw new DayIsNotValidException("The Date is Not in The Range Make sure the date is well checked and the year is in range");
