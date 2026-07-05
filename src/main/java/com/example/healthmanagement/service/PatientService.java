@@ -55,33 +55,45 @@ public class PatientService {
 
     }
 
-    // ##################################### Making Appointment
+    // ##################################### Making Appointment (Step 3)
     @PreAuthorize("hasAuthority('PATIENT')")
-    public AppointmentResponse makeAppointment(String phone, AppointmentRequest request,Long clinicianID){
-        //find if user exist
-        User findUser = userRepository.findByContactPhone(phone);
-        if(findUser==null||findUser.getRole()!= Role.PATIENT){
-            throw new UserNotFoudException("User Not Foud");
+    public AppointmentResponse makeAppointment(String phone, AppointmentRequest request, Long clinicianID) {
+        if (request == null || request.getDateTime() == null) {
+            throw new DayIsNotValidException("Date is required");
         }
-        //find the clinician if exit by id
-        User clinician =userRepository.findClinicianById(clinicianID);
-        if(clinician==null||clinician.getRole()!= Role.CLINICIAN){
+
+        // find patient by phone
+        User patient = userRepository.findByContactPhone(phone);
+        if (patient == null || patient.getRole() != Role.PATIENT) {
             throw new UserNotFoudException("User Not Foud");
         }
 
-        //making appointment
-        Appointment appointment = modelMapper.map(request,Appointment.class);
+        // find clinician by id
+        User clinician = userRepository.findClinicianById(clinicianID);
+        if (clinician == null || clinician.getRole() != Role.CLINICIAN) {
+            throw new UserNotFoudException("User Not Foud");
+        }
 
-        //save appointment and connect with user
-        appointment.setPatient(findUser);
-        appointment.setStatus(AppointmentStatus.PENDING);
-        appointment.setClinician(clinician);
-        if(appointment.getDateTime().isBefore(LocalDate.now())){
+        // validate date (today or future)
+        if (request.getDateTime().isBefore(LocalDate.now())) {
             throw new DayIsNotValidException("The Date is Not in The Range Make sure the date is well checked and the year is in range");
         }
-       Appointment saved= appointmentRepository.save(appointment);
 
-        return  modelMapper.map(saved,AppointmentResponse.class);
+        Appointment appointment = modelMapper.map(request, Appointment.class);
+
+        appointment.setPatient(patient);
+        appointment.setClinician(clinician);
+        appointment.setStatus(AppointmentStatus.BOOKED);
+
+        // queue number: next sequential per clinician & date
+        Integer maxQueue = appointmentRepository.findMaxQueueNumberByClinicianIdAndDateTime(
+                clinician.getUserId(),
+                request.getDateTime()
+        );
+        appointment.setQueueNumber((maxQueue == null ? 0 : maxQueue) + 1);
+
+        Appointment saved = appointmentRepository.save(appointment);
+        return modelMapper.map(saved, AppointmentResponse.class);
     }
 
 }
