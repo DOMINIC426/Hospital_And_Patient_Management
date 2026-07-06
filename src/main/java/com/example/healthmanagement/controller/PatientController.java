@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -16,22 +17,33 @@ import org.springframework.web.bind.annotation.*;
 public class PatientController {
 
     private final PatientService patientService;
+
+    // HATUA YA 2 — Medical History
     @PreAuthorize("hasAuthority('PATIENT')")
-    @PostMapping("/add-medical-history/{phone}")
-    public ResponseEntity<String> addMedicalHistory(@RequestBody MedicalHistoryRequest request,@PathVariable String phone){
-        return ResponseEntity.ok(patientService.addMedicalReport(request,phone));
+    @PostMapping("/medical-history")
+    public ResponseEntity<String> addMedicalHistory(
+            @RequestBody MedicalHistoryRequest request) {
+        return ResponseEntity.ok(patientService.addMedicalReport(request));
     }
 
     @PreAuthorize("hasAuthority('PATIENT')")
-    @GetMapping("/medical-history/{id}")
-    public ResponseEntity<MedicalHistoryRequest> getMedicalHistory(@PathVariable Long id){
-        return ResponseEntity.ok(patientService.getMedicalReport(id));
+    @GetMapping("/medical-history")
+    public ResponseEntity<MedicalHistoryRequest> getMedicalHistory() {
+        return ResponseEntity.ok(patientService.getMedicalReport());
+    }
+
+    // HATUA YA 3 — Appointments
+    @PreAuthorize("hasAuthority('PATIENT')")
+    @PostMapping("/appointment/{clinicianId}")
+    public ResponseEntity<AppointmentResponse> makeAppointment(
+            @RequestBody AppointmentRequest request,
+            @PathVariable Long clinicianId) {
+        return ResponseEntity.ok(patientService.makeAppointment(request, clinicianId));
     }
 
     @PreAuthorize("hasAuthority('PATIENT')")
-    @PostMapping("/make-appointment/{phone}/{clinicianID}")
-    public ResponseEntity<AppointmentResponse> makeAppointment(@RequestBody AppointmentRequest request,@PathVariable String phone,@PathVariable Long clinicianID){
-        return ResponseEntity.ok(patientService.makeAppointment(phone,request,clinicianID));
+    @GetMapping("/appointments")
+    public ResponseEntity<List<AppointmentResponse>> getMyAppointments() {
+        return ResponseEntity.ok(patientService.getMyAppointments());
     }
-
 }

@@ -45,6 +45,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers("/api/v1/admin/**").hasAuthority("ADMINISTRATOR")
                         .requestMatchers("/api/v1/patient/**").hasAuthority("PATIENT")
+                        .requestMatchers("/api/v1/gemini/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
