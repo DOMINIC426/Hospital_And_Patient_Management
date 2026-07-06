@@ -43,6 +43,7 @@ public class AuthService {
         //adding the user Role in token
         Map<String,Object> claims = new HashMap<>();
         claims.put("role",savedUser.getRole());
+        claims.put("name",savedUser.getFirstName());
 
         String token = jwtService.generateToken(claims,savedUser);
         return new RegisterResponse(token);
