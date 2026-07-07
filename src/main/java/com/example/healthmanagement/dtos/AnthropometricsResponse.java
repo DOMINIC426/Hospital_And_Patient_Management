@@ -1,6 +1,7 @@
 package com.example.healthmanagement.dtos;
 
 import com.example.healthmanagement.model.enums.Allegies;
+import com.example.healthmanagement.model.enums.BmiCondition;
 import com.example.healthmanagement.model.enums.ChronicCondition;
 import com.example.healthmanagement.model.enums.Feeling;
 import lombok.AllArgsConstructor;
@@ -30,4 +31,5 @@ public class AnthropometricsResponse {
     private String contact;
     private String contactName;
     private String BMI;
+    private BmiCondition bmiCondition;
 }
