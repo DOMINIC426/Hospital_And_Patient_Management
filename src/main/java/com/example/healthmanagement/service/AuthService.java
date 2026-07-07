@@ -46,7 +46,7 @@ public class AuthService {
         claims.put("name",savedUser.getFirstName());
 
         String token = jwtService.generateToken(claims,savedUser);
-        return new RegisterResponse(token);
+        return new RegisterResponse(token,savedUser.getFirstName());
     }
 
 
@@ -65,6 +65,6 @@ public class AuthService {
         claims.put("role",user.getRole().name());
 
         String token = jwtService.generateToken(claims,user);
-        return new AuthenticationResponse(token);
+        return new AuthenticationResponse(token,user.getFirstName());
     }
 }
