@@ -1,8 +1,6 @@
 package com.example.healthmanagement.controller;
 
-import com.example.healthmanagement.dtos.AppointmentRequest;
-import com.example.healthmanagement.dtos.AppointmentResponse;
-import com.example.healthmanagement.dtos.MedicalHistoryRequest;
+import com.example.healthmanagement.dtos.*;
 import com.example.healthmanagement.service.PatientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -46,4 +44,14 @@ public class PatientController {
     public ResponseEntity<List<AppointmentResponse>> getMyAppointments() {
         return ResponseEntity.ok(patientService.getMyAppointments());
     }
+
+
+    //Anthropometrics
+    @PreAuthorize("hasAuthority('PATIENT')")
+    @PostMapping("/anth/{phone}")
+    public ResponseEntity<AnthropometricsResponse> response(@RequestBody AnthropometricsRequest request,@PathVariable  String phone) {
+
+        return ResponseEntity.ok(patientService.anthropometrics(request,phone));
+    }
+
 }

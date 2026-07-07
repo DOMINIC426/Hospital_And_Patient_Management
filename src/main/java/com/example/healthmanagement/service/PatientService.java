@@ -1,22 +1,26 @@
 package com.example.healthmanagement.service;
 
-import com.example.healthmanagement.dtos.AppointmentRequest;
-import com.example.healthmanagement.dtos.AppointmentResponse;
-import com.example.healthmanagement.dtos.MedicalHistoryRequest;
+import com.example.healthmanagement.dtos.*;
 import com.example.healthmanagement.exception.DayIsNotValidException;
 import com.example.healthmanagement.exception.UserNotFoudException;
+import com.example.healthmanagement.model.Anthropometrics;
 import com.example.healthmanagement.model.Appointment;
 import com.example.healthmanagement.model.MedicalHistory;
 import com.example.healthmanagement.model.User;
 import com.example.healthmanagement.model.enums.AppointmentStatus;
+import com.example.healthmanagement.model.enums.BmiCondition;
 import com.example.healthmanagement.model.enums.Role;
+import com.example.healthmanagement.repository.AnthropometricsRepository;
 import com.example.healthmanagement.repository.AppointmentRepository;
 import com.example.healthmanagement.repository.MedicalHistoryRepository;
 import com.example.healthmanagement.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Service
@@ -26,6 +30,8 @@ public class PatientService {
     private final UserRepository userRepository;
     private final MedicalHistoryRepository medicalHistoryRepository;
     private final AppointmentRepository appointmentRepository;
+    private final ModelMapper modelMapper;
+    private final AnthropometricsRepository anthropometricsRepository;
 
     // HATUA YA 2 — Add Medical History
     public String addMedicalReport(MedicalHistoryRequest request) {
@@ -166,5 +172,41 @@ public class PatientService {
                     return r;
                 })
                 .toList();
+    }
+
+    //############################################################################ add the anthropometric
+    @PreAuthorize("hasAuthority('PATIENT')")
+    public AnthropometricsResponse anthropometrics(AnthropometricsRequest request,String phone) {
+
+        User user = userRepository.findByContactPhone(phone);
+        if (user == null) {
+            throw  new UserNotFoudException("User Not Found");
+        }
+
+        Anthropometrics anthropometrics = modelMapper.map(request, Anthropometrics.class);
+        //calculating the BMI
+        Double BMI  = (request.getWeight()/request.getHeight());
+        if(BMI<18.5){
+            anthropometrics.setBmiCondition(BmiCondition.UNDER);
+            anthropometrics.setBMI(BMI);
+        }
+        if(BMI>=18.5 && BMI<=25){
+            anthropometrics.setBmiCondition(BmiCondition.HEALTH);
+            anthropometrics.setBMI(BMI);
+        }
+        if(BMI>=25 && BMI<=30){
+            anthropometrics.setBmiCondition(BmiCondition.OVER);
+            anthropometrics.setBMI(BMI);
+        }
+        if(BMI>=30 && BMI<=35){
+            anthropometrics.setBmiCondition(BmiCondition.OBESE);
+            anthropometrics.setBMI(BMI);
+        }
+
+
+        Anthropometrics saved =anthropometricsRepository.save(anthropometrics);
+        user.setAnthropometrics(saved);
+
+        return modelMapper.map(saved, AnthropometricsResponse.class);
     }
 }

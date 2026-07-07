@@ -47,14 +47,15 @@ public class User implements UserDetails {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private MedicalHistory medicalHistory;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Visit> visits = new ArrayList<>();
 
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Appointment> appointments = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SecurityLog> securityLogs = new ArrayList<>();
+
+    @OneToOne(mappedBy = "user")
+    private Anthropometrics anthropometrics;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

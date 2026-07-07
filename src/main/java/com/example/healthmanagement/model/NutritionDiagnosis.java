@@ -18,9 +18,6 @@ public class NutritionDiagnosis {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long diagnosisId;
 
-    @OneToOne
-    @JoinColumn(name = "visit_id", nullable = false)
-    private Visit visit;
 
     @Column(columnDefinition = "TEXT")
     private String problem;

@@ -49,12 +49,6 @@ public class ClinicianController {
         return ResponseEntity.ok(clinicianService.cancelAppointment(appointmentId));
     }
 
-    // HATUA YA 4 — Open Visit
-    @PreAuthorize("hasAuthority('CLINICIAN')")
-    @PostMapping("/visit/{appointmentId}")
-    public ResponseEntity<VisitResponse> openVisit(
-            @PathVariable Long appointmentId,
-            @RequestBody CreateVisitRequest request) {
-        return ResponseEntity.ok(clinicianService.createVisit(appointmentId, request));
-    }
+
+
 }
