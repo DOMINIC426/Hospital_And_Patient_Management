@@ -1,18 +1,17 @@
 package com.example.healthmanagement.dtos;
 
+import com.example.healthmanagement.model.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
-
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AppointmentRequest {
-    private LocalDate dateTime;
-    private String reason;
-
+public class ClinicianResponse {
+    private String firstName;
+    private String lastName;
+    private Role role;
 }

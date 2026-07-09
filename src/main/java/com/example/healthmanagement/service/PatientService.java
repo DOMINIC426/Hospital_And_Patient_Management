@@ -14,6 +14,7 @@ import com.example.healthmanagement.repository.AnthropometricsRepository;
 import com.example.healthmanagement.repository.AppointmentRepository;
 import com.example.healthmanagement.repository.MedicalHistoryRepository;
 import com.example.healthmanagement.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +35,9 @@ public class PatientService {
     private final ModelMapper modelMapper;
     private final AnthropometricsRepository anthropometricsRepository;
 
-    // HATUA YA 2 — Add Medical History
+    //   Add Medical History ************************************************************************
+    @Transactional()
+    @PreAuthorize("hasAuthority('PATIENT')")
     public String addMedicalReport(MedicalHistoryRequest request) {
         // get logged-in patient from security context — never trust phone from URL
         String phone = SecurityContextHolder.getContext()
@@ -69,7 +73,9 @@ public class PatientService {
         return "Medical history added successfully";
     }
 
-    // HATUA YA 2 — Get own Medical History
+    //  Get own Medical History
+    @Transactional()
+    @PreAuthorize("hasAuthority('PATIENT')")
     public MedicalHistoryRequest getMedicalReport() {
         // get logged-in patient from security context
         String phone = SecurityContextHolder.getContext()
@@ -98,6 +104,8 @@ public class PatientService {
     }
 
     // HATUA YA 3 — Make Appointment
+    @Transactional()
+    @PreAuthorize("hasAuthority('PATIENT')")
     public AppointmentResponse makeAppointment(AppointmentRequest request, Long clinicianId) {
         if (request == null || request.getDateTime() == null) {
             throw new DayIsNotValidException("Date is required");
@@ -150,6 +158,8 @@ public class PatientService {
     }
 
     // get own appointments
+    @Transactional()
+    @PreAuthorize("hasAuthority('PATIENT')")
     public java.util.List<AppointmentResponse> getMyAppointments() {
         String phone = SecurityContextHolder.getContext()
                 .getAuthentication().getName();
@@ -208,5 +218,14 @@ public class PatientService {
         user.setAnthropometrics(saved);
 
         return modelMapper.map(saved, AnthropometricsResponse.class);
+    }
+
+    //************************************ Patient see the List of All clinician present
+    @Transactional()
+    @PreAuthorize("hasAuthority('PATIENT')")
+    public List<ClinicianResponse> getAllClinicians(){
+        List<User> users = userRepository.findAllClinician();
+        return users.stream()
+                .map(list->modelMapper.map(list,ClinicianResponse.class)).toList();
     }
 }

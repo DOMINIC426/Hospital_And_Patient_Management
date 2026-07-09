@@ -33,6 +33,7 @@ public class Appointment {
     private LocalDate dateTime;
 
     private Integer queueNumber;
+    private String reason;
 
     @Enumerated(EnumType.STRING)
     private AppointmentStatus status;

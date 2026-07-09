@@ -54,4 +54,13 @@ public class PatientController {
         return ResponseEntity.ok(patientService.anthropometrics(request,phone));
     }
 
+    // SEE List of clinicians ***********************************************
+
+    @PreAuthorize("hasAuthority('PATIENT')")
+    @GetMapping("/doctors")
+    public ResponseEntity<List<ClinicianResponse>> getAllClinician(){
+        return ResponseEntity.ok(patientService.getAllClinicians());
+    }
+
+
 }
