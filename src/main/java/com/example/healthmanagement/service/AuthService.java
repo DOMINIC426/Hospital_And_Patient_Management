@@ -46,7 +46,7 @@ public class AuthService {
         claims.put("name",savedUser.getFirstName());
 
         String token = jwtService.generateToken(claims,savedUser);
-        return new RegisterResponse(token,savedUser.getFirstName());
+        return new RegisterResponse(token,savedUser.getFirstName(),savedUser.getRole());
     }
 
 
