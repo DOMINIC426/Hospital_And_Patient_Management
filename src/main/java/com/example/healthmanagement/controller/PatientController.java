@@ -63,4 +63,13 @@ public class PatientController {
     }
 
 
+    //************************* get info about the anthropometrics
+    @PreAuthorize("hasAuthority('PATIENT')")
+    @GetMapping("/anth/{phone}")
+    public  ResponseEntity<AnthropometricsResponse> response(@PathVariable String phone){
+        return ResponseEntity.ok(patientService.getAnthropomrtrics(phone));
+
+    }
+
+
 }

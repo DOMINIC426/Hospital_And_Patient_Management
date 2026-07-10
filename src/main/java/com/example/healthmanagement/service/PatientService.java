@@ -228,4 +228,11 @@ public class PatientService {
         return users.stream()
                 .map(list->modelMapper.map(list,ClinicianResponse.class)).toList();
     }
+
+    @Transactional()
+    @PreAuthorize("hasAuthority('PATIENT')")
+    public AnthropometricsResponse getAnthropomrtrics(String phone){
+        Anthropometrics anthropometrics = anthropometricsRepository.findByContactUserId(phone);
+        return modelMapper.map(anthropometrics, AnthropometricsResponse.class);
+    }
 }
