@@ -232,6 +232,11 @@ public class PatientService {
     @Transactional()
     @PreAuthorize("hasAuthority('PATIENT')")
     public AnthropometricsResponse getAnthropomrtrics(String phone){
+        //check if the number exist in Db
+        User findUser = userRepository.findByContactPhone(phone);
+        if(findUser==null){
+            throw new UserNotFoudException("The Phone Number Should be the One that registered ");
+        }
         Anthropometrics anthropometrics = anthropometricsRepository.findByContactUserId(phone);
         return modelMapper.map(anthropometrics, AnthropometricsResponse.class);
     }

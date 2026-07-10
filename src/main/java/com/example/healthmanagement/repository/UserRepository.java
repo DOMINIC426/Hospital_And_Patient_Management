@@ -18,7 +18,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     //find the user with the role of clinician only
     @Query("""
-      SELECT u FROM User u WHERE u.role ="ClINICIAN"
+      SELECT u FROM User u WHERE u.role ='CLINICIAN'
 """)
     List<User> findAllClinician();
 

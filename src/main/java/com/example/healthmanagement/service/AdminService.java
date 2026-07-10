@@ -3,6 +3,7 @@ package com.example.healthmanagement.service;
 import com.example.healthmanagement.dtos.AddUserRequest;
 import com.example.healthmanagement.dtos.RegisterRequest;
 import com.example.healthmanagement.dtos.UserResponse;
+import com.example.healthmanagement.exception.UserAlreadyExistException;
 import com.example.healthmanagement.model.User;
 import com.example.healthmanagement.model.enums.Role;
 import com.example.healthmanagement.repository.UserRepository;
@@ -42,7 +43,7 @@ public class AdminService {
     @Transactional
     public String addUser(AddUserRequest request) {
         if (userRepository.findByContactPhone(request.getContactPhone()) != null) {
-            throw new RuntimeException("Phone number already in use");
+            throw new UserAlreadyExistException("Phone number already in use");
         }
         User user = modelMapper.map(request,User.class);
         user.setInsuranceStatus("ACTIVE");
