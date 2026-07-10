@@ -40,6 +40,7 @@ public class Anthropometrics {
     private String dietPreferred;
     private String familyMedicalHistory;
     private String pastSurgery;
+    @Column(nullable = false,unique = true)
     private String contact;
     private String contactName;
     private Double BMI;
